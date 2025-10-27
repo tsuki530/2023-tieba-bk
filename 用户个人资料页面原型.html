@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 百度百科</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 头部导航 */
+        .header {
+            background: linear-gradient(135deg, #3385ff 0%, #1a6bcc 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #3385ff;
+        }
+        
+        .btn-secondary {
+            background: #666;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        /* 个人资料区域 */
+        .profile-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #3385ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+        
+        .profile-bio {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3385ff;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* 标签页导航 */
+        .tab-nav {
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .tab-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .tab-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-item.active {
+            border-bottom-color: #3385ff;
+            color: #3385ff;
+            font-weight: bold;
+        }
+        
+        /* 标签页内容 */
+        .tab-content {
+            padding: 30px;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        /* 内容网格 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .content-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #3385ff;
+        }
+        
+        .card-meta {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .card-desc {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .card-btn {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .card-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        /* 关注列表 */
+        .follow-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .follow-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .follow-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .follow-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #3385ff;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .follow-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .follow-bio {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-box {
+                max-width: 100%;
+                margin: 10px 0;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .profile-stats {
+                justify-content: center;
+            }
+            
+            .tab-list {
+                flex-wrap: wrap;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .follow-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">百度百科</div>
+                <div class="search-box">
+                    <input type="text" placeholder="搜索词条、用户、帖子...">
+                </div>
+                <div class="user-actions">
+                    <span style="color: white;">欢迎，张三</span>
+                    <a href="#" class="btn btn-secondary">设置</a>
+                    <a href="#" class="btn btn-primary">退出</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 个人资料区域 -->
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="avatar">张</div>
+                <div class="profile-info">
+                    <h1 class="profile-name">张三</h1>
+                    <p class="profile-bio">人工智能爱好者 | 机器学习工程师 | 热爱技术分享</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">词条编辑</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">89</div>
+                            <div class="stat-label">发布帖子</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1,234</div>
+                            <div class="stat-label">获得点赞</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">567</div>
+                            <div class="stat-label">粉丝</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn btn-primary">编辑资料</button>
+                    <button class="btn btn-secondary">消息设置</button>
+                </div>
+            </div>
+            
+            <!-- 标签页导航 -->
+            <div class="tab-nav">
+                <ul class="tab-list">
+                    <li class="tab-item active" data-tab="my-articles">我的词条</li>
+                    <li class="tab-item" data-tab="my-posts">我的帖子</li>
+                    <li class="tab-item" data-tab="favorites">我的收藏</li>
+                    <li class="tab-item" data-tab="following">我的关注</li>
+                    <li class="tab-item" data-tab="followers">我的粉丝</li>
+                </ul>
+            </div>
+            
+            <!-- 标签页内容 -->
+            <div class="tab-content">
+                <!-- 我的词条 -->
+                <div class="tab-pane active" id="my-articles">
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <h3 class="card-title">人工智能</h3>
+                            <div class="card-meta">
+                                <span>📚 计算机科学</span>
+                                <span>🕒 2024-01-15</span>
+                                <span>👁️ 1,234</span>
+                            </div>
+                            <p class="card-desc">人工智能是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。</p>
+                            <div class="card-actions">
+                                <button class="card-btn">编辑</button>
+                                <button class="card-btn">查看</button>
+                                <button class="card-btn">分享</button>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <h3 class="card-title">机器学习</h3>
+                            <div class="card-meta">
+                                <span>📚 计算机科学</span>
+                                <span>🕒 2024-01-10</span>
+                                <span>👁️ 890</span>
+                            </div>
+                            <p class="card-desc">机器学习是人工智能的核心，是使计算机具有智能的根本途径。机器学习算法可以分为监督学习、无监督学习等。</p>
+                            <div class="card-actions">
+                                <button class="card-btn">编辑</button>
+                                <button class="card-btn">查看</button>
+                                <button class="card-btn">分享</button>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <h3 class="card-title">深度学习</h3>
+                            <div class="card-meta">
+                                <span>📚 计算机科学</span>
+                                <span>🕒 2024-01-08</span>
+                                <span>👁️ 765</span>
+                            </div>
+                            <p class="card-desc">深度学习是机器学习的一个分支，它试图使用包含复杂结构或由多重非线性变换构成的多个处理层对数据进行高层抽象的算法。</p>
+                            <div class="card-actions">
+                                <button class="card-btn">编辑</button>
+                                <button class="card-btn">查看</button>
+                                <button class="card-btn">分享</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我的帖子 -->
+                <div class="tab-pane" id="my-posts">
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <h3 class="card-title">人工智能的未来发展趋势</h3>
+                            <div class="card-meta">
+                                <span>💬 技术讨论</span>
+                                <span>🕒 2024-01-12</span>
+                                <span>👍 156</span>
+                            </div>
+                            <p class="card-desc">探讨人工智能在未来十年的发展方向，包括技术突破、应用场景和社会影响等方面的分析。</p>
+                            <div class="card-actions">
+                                <button class="card-btn">查看</button>
+                                <button class="card-btn">编辑</button>
+                                <button class="card-btn">删除</button>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <h3 class="card-title">机器学习实战经验分享</h3>
+                            <div class="card-meta">
+                                <span>💬 经验分享</span>
+                                <span>🕒 2024-01-08</span>
+                                <span>👍 89</span>
+                            </div>
+                            <p class="card-desc">分享在实际项目中应用机器学习的经验和技巧，包括数据预处理、模型选择和调优等环节。</p>
+                            <div class="card-actions">
+                                <button class="card-btn">查看</button>
+                                <button class="card-btn">编辑</button>
+                                <button class="card-btn">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我的收藏 -->
+                <div class="tab-pane" id="favorites">
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <h3 class="card-title">神经网络原理详解</h3>
+                            <div class="card-meta">
+                                <span>📚 计算机科学</span>
+                                <span>👤 李四</span>
+                                <span>⭐ 收藏于 2024-01-10</span>
+                            </div>
+                            <p class="card-desc">详细讲解神经网络的基本原理、结构设计和训练方法，适合深度学习入门学习。</p>
+                            <div class="card-actions">
+                                <button class="card-btn">查看</button>
+                                <button class="card-btn">取消收藏</button>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card">
+                            <h3 class="card-title">Python数据分析实战</h3>
+                            <div class="card-meta">
+                                <span>📚 编程技术</span>
+                                <span>👤 王五</span>
+                                <span>⭐ 收藏于 2024-01-05</span>
+                            </div>
+                            <p class="card-desc">使用Python进行数据分析和可视化的完整教程，包含pandas、numpy、matplotlib等库的使用。</p>
+                            <div class="card-actions">
+                                <button class="card-btn">查看</button>
+                                <button class="card-btn">取消收藏</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我的关注 -->
+                <div class="tab-pane" id="following">
+                    <div class="follow-list">
+                        <div class="follow-card">
+                            <div class="follow-avatar">李</div>
+                            <div class="follow-name">李四</div>
+                            <div class="follow-bio">机器学习专家</div>
+                            <button class="card-btn">取消关注</button>
+                        </div>
+                        
+                        <div class="follow-card">
+                            <div class="follow-avatar">王</div>
+                            <div class="follow-name">王五</div>
+                            <div class="follow-bio">数据科学家</div>
+                            <button class="card-btn">取消关注</button>
+                        </div>
+                        
+                        <div class="follow-card">
+                            <div class="follow-avatar">赵</div>
+                            <div class="follow-name">赵六</div>
+                            <div class="follow-bio">AI研究员</div>
+                            <button class="card-btn">取消关注</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 我的粉丝 -->
+                <div class="tab-pane" id="followers">
+                    <div class="follow-list">
+                        <div class="follow-card">
+                            <div class="follow-avatar">钱</div>
+                            <div class="follow-name">钱七</div>
+                            <div class="follow-bio">学生</div>
+                            <button class="card-btn">私信</button>
+                        </div>
+                        
+                        <div class="follow-card">
+                            <div class="follow-avatar">孙</div>
+                            <div class="follow-name">孙八</div>
+                            <div class="follow-bio">工程师</div>
+                            <button class="card-btn">私信</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 标签页切换功能
+            const tabItems = document.querySelectorAll('.tab-item');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            
+            tabItems.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 更新标签页状态
+                    tabItems.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新内容面板
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // 编辑资料功能
+            document.querySelector('.profile-actions .btn-primary').addEventListener('click', function() {
+                alert('打开编辑资料页面');
+                // 这里可以跳转到编辑资料页面
+            });
+            
+            // 消息设置功能
+            document.querySelector('.profile-actions .btn-secondary').addEventListener('click', function() {
+                alert('打开消息设置页面');
+                // 这里可以跳转到消息设置页面
+            });
+            
+            // 卡片操作功能
+            document.querySelectorAll('.card-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.textContent;
+                    const cardTitle = this.closest('.content-card').querySelector('.card-title').textContent;
+                    
+                    switch(action) {
+                        case '编辑':
+                            alert(`编辑: ${cardTitle}`);
+                            break;
+                        case '查看':
+                            alert(`查看: ${cardTitle}`);
+                            break;
+                        case '分享':
+                            alert(`分享: ${cardTitle}`);
+                            break;
+                        case '删除':
+                            if (confirm(`确定要删除"${cardTitle}"吗？`)) {
+                                this.closest('.content-card').remove();
+                            }
+                            break;
+                        case '取消收藏':
+                            if (confirm(`确定要取消收藏"${cardTitle}"吗？`)) {
+                                this.closest('.content-card').remove();
+                            }
+                            break;
+                        case '取消关注':
+                            const userName = this.closest('.follow-card').querySelector('.follow-name').textContent;
+                            if (confirm(`确定要取消关注"${userName}"吗？`)) {
+                                this.closest('.follow-card').remove();
+                            }
+                            break;
+                        case '私信':
+                            const targetUser = this.closest('.follow-card').querySelector('.follow-name').textContent;
+                            alert(`给 ${targetUser} 发送私信`);
+                            break;
+                    }
+                });
+            });
+            
+            // 模拟数据加载
+            function loadTabContent(tabId) {
+                // 这里可以添加实际的数据加载逻辑
+                console.log(`加载 ${tabId} 的内容`);
+            }
+            
+            // 监听标签页切换，加载对应内容
+            tabItems.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    loadTabContent(tabId);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

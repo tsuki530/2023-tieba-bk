@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>消息通知 - 百度百科</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 头部导航 */
+        .header {
+            background: linear-gradient(135deg, #3385ff 0%, #1a6bcc 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #3385ff;
+        }
+        
+        .btn-secondary {
+            background: #666;
+        }
+        
+        /* 页面标题 */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 20px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        /* 通知类型筛选 */
+        .filter-tabs {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .filter-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .filter-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-item.active {
+            border-bottom-color: #3385ff;
+            color: #3385ff;
+            font-weight: bold;
+            background: #f8f9fa;
+        }
+        
+        .filter-count {
+            background: #3385ff;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        /* 通知列表 */
+        .notification-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .notification-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .notification-item {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .notification-item.unread {
+            background: #f0f8ff;
+            border-left: 4px solid #3385ff;
+        }
+        
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .icon-system {
+            background: #3385ff;
+        }
+        
+        .icon-like {
+            background: #ff4444;
+        }
+        
+        .icon-comment {
+            background: #28a745;
+        }
+        
+        .icon-follow {
+            background: #ffc107;
+        }
+        
+        .icon-article {
+            background: #6f42c1;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-text {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .notification-meta {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .notification-btn {
+            padding: 4px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        .notification-btn.primary {
+            background: #3385ff;
+            color: white;
+            border-color: #3385ff;
+        }
+        
+        .notification-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .unread-dot {
+            width: 8px;
+            height: 8px;
+            background: #3385ff;
+            border-radius: 50%;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        /* 加载更多 */
+        .load-more {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .load-more-btn {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .load-more-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-box {
+                max-width: 100%;
+                margin: 10px 0;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .filter-list {
+                flex-wrap: wrap;
+            }
+            
+            .filter-item {
+                flex: 1 0 50%;
+            }
+            
+            .notification-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .notification-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">百度百科</div>
+                <div class="search-box">
+                    <input type="text" placeholder="搜索词条、用户、帖子...">
+                </div>
+                <div class="user-actions">
+                    <div class="notification-badge">
+                        🔔
+                        <div class="badge">12</div>
+                    </div>
+                    <span style="color: white;">欢迎，张三</span>
+                    <a href="#" class="btn btn-secondary">设置</a>
+                    <a href="#" class="btn btn-primary">退出</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 页面标题 -->
+        <div class="page-header">
+            <h1 class="page-title">消息通知</h1>
+            <div class="notification-actions">
+                <button class="action-btn" id="mark-all-read">全部标记已读</button>
+                <button class="action-btn" id="clear-all">清空通知</button>
+                <button class="action-btn" id="notification-settings">通知设置</button>
+            </div>
+        </div>
+        
+        <!-- 通知类型筛选 -->
+        <div class="filter-tabs">
+            <ul class="filter-list">
+                <li class="filter-item active" data-filter="all">
+                    全部通知
+                    <span class="filter-count">12</span>
+                </li>
+                <li class="filter-item" data-filter="system">
+                    系统通知
+                    <span class="filter-count">3</span>
+                </li>
+                <li class="filter-item" data-filter="like">
+                    点赞
+                    <span class="filter-count">5</span>
+                </li>
+                <li class="filter-item" data-filter="comment">
+                    评论
+                    <span class="filter-count">2</span>
+                </li>
+                <li class="filter-item" data-filter="follow">
+                    关注
+                    <span class="filter-count">1</span>
+                </li>
+                <li class="filter-item" data-filter="article">
+                    词条相关
+                    <span class="filter-count">1</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 通知列表 -->
+        <div class="notification-container">
+            <ul class="notification-list" id="notification-list">
+                <!-- 系统通知 -->
+                <li class="notification-item unread" data-type="system">
+                    <div class="notification-icon icon-system">📢</div>
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>系统公告：</strong>百度百科平台将于2024-02-01进行系统维护，预计维护时间2小时。
+                        </div>
+                        <div class="notification-meta">
+                            <span>📅 2024-01-25 10:30</span>
+                            <span>👤 系统管理员</span>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="notification-btn primary">查看详情</button>
+                            <button class="notification-btn">标记已读</button>
+                        </div>
+                    </div>
+                    <div class="notification-status">
+                        <div class="unread-dot"></div>
+                    </div>
+                </li>
+                
+                <!-- 点赞通知 -->
+                <li class="notification-item unread" data-type="like">
+                    <div class="notification-icon icon-like">👍</div>
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>李四</strong> 点赞了您的帖子 <strong>《人工智能的未来发展趋势》</strong>
+                        </div>
+                        <div class="notification-meta">
+                            <span>📅 2024-01-25 09:15</span>
+                            <span>💬 技术讨论</span>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="notification-btn primary">查看帖子</button>
+                            <button class="notification-btn">标记已读</button>
+                        </div>
+                    </div>
+                    <div class="notification-status">
+                        <div class="unread-dot"></div>
+                    </div>
+                </li>
+                
+                <li class="notification-item unread" data-type="like">
+                    <div class="notification-icon icon-like">👍</div>
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>王五</strong> 点赞了您的词条 <strong>《机器学习》</strong>
+                        </div>
+                        <div class="notification-meta">
+                            <span>📅 2024-01-25 08:45</span>
+                            <span>📚 计算机科学</span>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="notification-btn primary">查看词条</button>
+                            <button class="notification-btn">标记已读</button>
+                        </div>
+                    </div>
+                    <div class="notification-status">
+                        <div class="unread-dot"></div>
+                    </div>
+                </li>
+                
+                <!-- 评论通知 -->
+                <li class="notification-item unread" data-type="comment">
+                    <div class="notification-icon icon-comment">💬</div>
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>赵六</strong> 评论了您的帖子："这篇文章写得很好，特别是关于AI伦理的讨论很有深度。"
+                        </div>
+                        <div class="notification-meta">
+                            <span>📅 2024-01-24 22:30</span>
+                            <span>💬 技术讨论</span>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="notification-btn primary">查看评论</button>
+                            <button class="notification-btn">回复</button>
+                            <button class="notification-btn">标记已读</button>
+                        </div>
+                    </div>
+                    <div class="notification-status">
+                        <div class="unread-dot"></div>
+                    </div>
+                </li>
+                
+                <!-- 关注通知 -->
+                <li class="notification-item unread" data-type="follow">
+                    <div class="notification-icon icon-follow">👤</div>
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>钱七</strong> 关注了您
+                        </div>
+                        <div class="notification-meta">
+                            <span>📅 2024-01-24 20:15</span>
+                            <span>🎓 学生</span>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="notification-btn primary">查看资料</button>
+                            <button class="notification-btn">回关</button>
+                            <button class="notification-btn">标记已读</button>
+                        </div>
+                    </div>
+                    <div class="notification-status">
+                        <div class="unread-dot"></div>
+                    </div>
+                </li>
+                
+                <!-- 词条相关通知 -->
+                <li class="notification-item unread" data-type="article">
+                    <div class="notification-icon icon-article">📝</div>
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            您创建的词条 <strong>《深度学习》</strong> 被管理员推荐为优质词条
+                        </div>
+                        <div class="notification-meta">
+                            <span>📅 2024-01-24 18:00</span>
+                            <span>⭐ 优质内容</span>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="notification-btn primary">查看词条</button>
+                            <button class="notification-btn">分享</button>
+                            <button class="notification-btn">标记已读</button>
+                        </div>
+                    </div>
+                    <div class="notification-status">
+                        <div class="unread-dot"></div>
+                    </div>
+                </li>
+                
+                <!-- 已读通知示例 -->
+                <li class="notification-item" data-type="like">
+                    <div class="notification-icon icon-like">👍</div>
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>孙八</strong> 点赞了您的评论
+                        </div>
+                        <div class="notification-meta">
+                            <span>📅 2024-01-24 16:30</span>
+                            <span>💬 技术讨论</span>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="notification-btn primary">查看评论</button>
+                            <button class="notification-btn">标记未读</button>
+                        </div>
+                    </div>
+                </li>
+                
+                <li class="notification-item" data-type="system">
+                    <div class="notification-icon icon-system">📢</div>
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>系统提示：</strong>您的账号安全等级已提升
+                        </div>
+                        <div class="notification-meta">
+                            <span>📅 2024-01-24 15:00</span>
+                            <span>🔒 账号安全</span>
+                        </div>
+                        <div class="notification-actions">
+                            <button class="notification-btn primary">查看详情</button>
+                            <button class="notification-btn">标记未读</button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            
+            <!-- 加载更多 -->
+            <div class="load-more">
+                <button class="load-more-btn" id="load-more">加载更多通知</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 通知类型筛选功能
+            const filterItems = document.querySelectorAll('.filter-item');
+            const notificationItems = document.querySelectorAll('.notification-item');
+            
+            filterItems.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    const filterType = this.getAttribute('data-filter');
+                    
+                    // 更新筛选状态
+                    filterItems.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 筛选通知
+                    notificationItems.forEach(item => {
+                        if (filterType === 'all') {
+                            item.style.display = 'flex';
+                        } else {
+                            if (item.getAttribute('data-type') === filterType) {
+                                item.style.display = 'flex';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+            
+            // 标记全部已读功能
+            document.getElementById('mark-all-read').addEventListener('click', function() {
+                const unreadItems = document.querySelectorAll('.notification-item.unread');
+                
+                unreadItems.forEach(item => {
+                    item.classList.remove('unread');
+                    const unreadDot = item.querySelector('.unread-dot');
+                    if (unreadDot) {
+                        unreadDot.remove();
+                    }
+                    
+                    // 更新标记按钮文本
+                    const markBtn = item.querySelector('.notification-btn:last-child');
+                    if (markBtn && markBtn.textContent === '标记已读') {
+                        markBtn.textContent = '标记未读';
+                    }
+                });
+                
+                // 更新未读计数
+                updateUnreadCount();
+                
+                alert('所有通知已标记为已读');
+            });
+            
+            // 清空通知功能
+            document.getElementById('clear-all').addEventListener('click', function() {
+                if (confirm('确定要清空所有通知吗？此操作不可撤销。')) {
+                    const notificationList = document.getElementById('notification-list');
+                    notificationList.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">暂无通知</div></div>';
+                    
+                    // 更新筛选计数
+                    updateFilterCounts();
+                    
+                    alert('所有通知已清空');
+                }
+            });
+            
+            // 通知设置功能
+            document.getElementById('notification-settings').addEventListener('click', function() {
+                alert('打开通知设置页面');
+                // 这里可以跳转到通知设置页面
+            });
+            
+            // 单个通知操作功能
+            document.querySelectorAll('.notification-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    const action = this.textContent;
+                    const notificationItem = this.closest('.notification-item');
+                    const notificationText = notificationItem.querySelector('.notification-text').textContent;
+                    
+                    switch(action) {
+                        case '标记已读':
+                            notificationItem.classList.remove('unread');
+                            const unreadDot = notificationItem.querySelector('.unread-dot');
+                            if (unreadDot) {
+                                unreadDot.remove();
+                            }
+                            this.textContent = '标记未读';
+                            updateUnreadCount();
+                            break;
+                        
+                        case '标记未读':
+                            notificationItem.classList.add('unread');
+                            const statusDiv = notificationItem.querySelector('.notification-status');
+                            if (statusDiv && !statusDiv.querySelector('.unread-dot')) {
+                                const dot = document.createElement('div');
+                                dot.className = 'unread-dot';
+                                statusDiv.appendChild(dot);
+                            }
+                            this.textContent = '标记已读';
+                            updateUnreadCount();
+                            break;
+                        
+                        case '查看详情':
+                        case '查看帖子':
+                        case '查看词条':
+                        case '查看评论':
+                            alert(`查看内容: ${notificationText}`);
+                            break;
+                        
+                        case '回复':
+                            const replyText = prompt('请输入回复内容:');
+                            if (replyText) {
+                                alert(`回复成功: ${replyText}`);
+                            }
+                            break;
+                        
+                        case '回关':
+                            alert('已回关该用户');
+                            break;
+                        
+                        case '分享':
+                            alert('分享功能已调用');
+                            break;
+                        
+                        case '查看资料':
+                            alert('打开用户资料页面');
+                            break;
+                    }
+                });
+            });
+            
+            // 点击通知项查看详情
+            notificationItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (!e.target.closest('.notification-btn')) {
+                        const notificationText = this.querySelector('.notification-text').textContent;
+                        alert(`查看通知详情: ${notificationText}`);
+                    }
+                });
+            });
+            
+            // 加载更多功能
+            document.getElementById('load-more').addEventListener('click', function() {
+                // 模拟加载更多数据
+                const notificationList = document.getElementById('notification-list');
+                const emptyState = notificationList.querySelector('.empty-state');
+                
+                if (emptyState) {
+                    emptyState.remove();
+                }
+                
+                // 添加更多通知项（模拟数据）
+                const moreNotifications = `
+                    <li class="notification-item" data-type="like">
+                        <div class="notification-icon icon-like">👍</div>
+                        <div class="notification-content">
+                            <div class="notification-text">
+                                <strong>周九</strong> 点赞了您的词条
+                            </div>
+                            <div class="notification-meta">
+                                <span>📅 2024-01-24 14:00</span>
+                                <span>📚 计算机科学</span>
+                            </div>
+                            <div class="notification-actions">
+                                <button class="notification-btn primary">查看词条</button>
+                                <button class="notification-btn">标记未读</button>
+                            </div>
+                        </div>
+                    </li>
+                `;
+                
+                notificationList.insertAdjacentHTML('beforeend', moreNotifications);
+                
+                // 重新绑定事件
+                bindNotificationEvents();
+                
+                alert('已加载更多通知');
+            });
+            
+            // 更新未读计数
+            function updateUnreadCount() {
+                const unreadCount = document.querySelectorAll('.notification-item.unread').length;
+                const badge = document.querySelector('.badge');
+                if (badge) {
+                    badge.textContent = unreadCount;
+                    if (unreadCount === 0) {
+                        badge.style.display = 'none';
+                    } else {
+                        badge.style.display = 'flex';
+                    }
+                }
+            }
+            
+            // 更新筛选计数
+            function updateFilterCounts() {
+                const filterCounts = {
+                    'all': document.querySelectorAll('.notification-item').length,
+                    'system': document.querySelectorAll('.notification-item[data-type="system"]').length,
+                    'like': document.querySelectorAll('.notification-item[data-type="like"]').length,
+                    'comment': document.querySelectorAll('.notification-item[data-type="comment"]').length,
+                    'follow': document.querySelectorAll('.notification-item[data-type="follow"]').length,
+                    'article': document.querySelectorAll('.notification-item[data-type="article"]').length
+                };
+                
+                filterItems.forEach(filter => {
+                    const filterType = filter.getAttribute('data-filter');
+                    const countSpan = filter.querySelector('.filter-count');
+                    if (countSpan) {
+                        countSpan.textContent = filterCounts[filterType];
+                    }
+                });
+            }
+            
+            // 重新绑定通知项事件
+            function bindNotificationEvents() {
+                const newItems = document.querySelectorAll('.notification-item:not(.bound)');
+                newItems.forEach(item => {
+                    item.classList.add('bound');
+                    
+                    item.addEventListener('click', function(e) {
+                        if (!e.target.closest('.notification-btn')) {
+                            const notificationText = this.querySelector('.notification-text').textContent;
+                            alert(`查看通知详情: ${notificationText}`);
+                        }
+                    });
+                });
+            }
+            
+            // 初始化绑定
+            bindNotificationEvents();
+        });
+    </script>
+</body>
+</html>

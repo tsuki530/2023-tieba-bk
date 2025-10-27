@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑词条 - 百度百科</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 头部导航 */
+        .header {
+            background: linear-gradient(135deg, #3385ff 0%, #1a6bcc 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #3385ff;
+        }
+        
+        .btn-secondary {
+            background: #666;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        /* 编辑页面布局 */
+        .edit-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .edit-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px 30px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .edit-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        
+        .edit-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .edit-content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+        
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3385ff;
+            box-shadow: 0 0 0 2px rgba(51, 133, 255, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+        }
+        
+        .editor-toolbar {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            padding: 10px;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .editor-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .editor-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .editor-content {
+            border: 1px solid #ddd;
+            border-radius: 0 0 4px 4px;
+            min-height: 300px;
+            padding: 15px;
+        }
+        
+        /* 标签输入 */
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 44px;
+            align-items: center;
+        }
+        
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .tag-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        /* 侧边栏 */
+        .edit-sidebar {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            border-left: 3px solid #3385ff;
+            padding-left: 10px;
+        }
+        
+        .version-list {
+            list-style: none;
+        }
+        
+        .version-item {
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .version-item:hover {
+            background: #e9ecef;
+        }
+        
+        .version-meta {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* 编辑操作栏 */
+        .edit-actions {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .preview-area {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .preview-area.active {
+            display: block;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-box {
+                max-width: 100%;
+                margin: 10px 0;
+            }
+            
+            .edit-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .edit-actions {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">百度百科</div>
+                <div class="search-box">
+                    <input type="text" placeholder="搜索词条、用户、帖子...">
+                </div>
+                <div class="user-actions">
+                    <span style="color: white;">欢迎，张三</span>
+                    <a href="#" class="btn btn-secondary">个人中心</a>
+                    <a href="#" class="btn btn-primary">退出</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 编辑页面 -->
+        <div class="edit-container">
+            <div class="edit-header">
+                <h1 class="edit-title">编辑词条：人工智能</h1>
+                <p class="edit-subtitle">请仔细编辑词条内容，确保信息的准确性和完整性</p>
+            </div>
+            
+            <div class="edit-content">
+                <!-- 主编辑区域 -->
+                <div>
+                    <div class="form-group">
+                        <label class="form-label">词条标题</label>
+                        <input type="text" class="form-control" value="人工智能" placeholder="请输入词条标题">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">分类</label>
+                        <select class="form-control">
+                            <option value="">请选择分类</option>
+                            <option value="computer" selected>计算机科学</option>
+                            <option value="math">数学</option>
+                            <option value="physics">物理</option>
+                            <option value="biology">生物</option>
+                            <option value="history">历史</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">标签</label>
+                        <div class="tags-input">
+                            <div class="tag">
+                                机器学习
+                                <span class="tag-remove">×</span>
+                            </div>
+                            <div class="tag">
+                                深度学习
+                                <span class="tag-remove">×</span>
+                            </div>
+                            <div class="tag">
+                                自然语言处理
+                                <span class="tag-remove">×</span>
+                            </div>
+                            <input type="text" class="tag-input" placeholder="添加标签...">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">词条内容</label>
+                        <div class="editor-toolbar">
+                            <button class="editor-btn">粗体</button>
+                            <button class="editor-btn">斜体</button>
+                            <button class="editor-btn">下划线</button>
+                            <button class="editor-btn">标题1</button>
+                            <button class="editor-btn">标题2</button>
+                            <button class="editor-btn">列表</button>
+                            <button class="editor-btn">链接</button>
+                            <button class="editor-btn">图片</button>
+                            <button class="editor-btn">表格</button>
+                        </div>
+                        <div class="editor-content" contenteditable="true">
+                            <h2>概述</h2>
+                            <p>人工智能（Artificial Intelligence，简称AI）是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。人工智能是计算机科学的一个分支，它企图了解智能的实质，并生产出一种新的能以人类智能相似的方式做出反应的智能机器。</p>
+                            
+                            <h2>发展历史</h2>
+                            <p>1956年 - 达特茅斯会议召开，标志着人工智能学科的诞生。</p>
+                            <p>1960年代 - 早期人工智能研究主要集中在问题求解和自然语言处理领域。</p>
+                            <p>1970年代 - 专家系统的出现，人工智能开始走向实用化。</p>
+                            
+                            <h2>核心技术</h2>
+                            <p><strong>机器学习</strong> - 机器学习是人工智能的核心，是使计算机具有智能的根本途径。</p>
+                            <p><strong>深度学习</strong> - 深度学习是机器学习的一个分支，它试图使用包含复杂结构或由多重非线性变换构成的多个处理层对数据进行高层抽象的算法。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">编辑摘要</label>
+                        <input type="text" class="form-control" placeholder="请简要描述本次编辑的内容（必填）">
+                    </div>
+                    
+                    <!-- 预览区域 -->
+                    <div class="preview-area" id="previewArea">
+                        <h3>预览效果</h3>
+                        <div id="previewContent"></div>
+                    </div>
+                </div>
+                
+                <!-- 侧边栏 -->
+                <div class="edit-sidebar">
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">编辑指南</h3>
+                        <ul style="font-size: 14px; color: #666; line-height: 1.6;">
+                            <li>确保内容客观、准确</li>
+                            <li>使用规范的中文表达</li>
+                            <li>引用可靠来源</li>
+                            <li>避免主观评价</li>
+                            <li>保持内容完整性</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">版本历史</h3>
+                        <ul class="version-list">
+                            <li class="version-item">
+                                <div>v2.1 - 更新核心技术部分</div>
+                                <div class="version-meta">张三 · 2024-01-15</div>
+                            </li>
+                            <li class="version-item">
+                                <div>v2.0 - 重构词条结构</div>
+                                <div class="version-meta">李四 · 2024-01-10</div>
+                            </li>
+                            <li class="version-item">
+                                <div>v1.5 - 添加应用案例</div>
+                                <div class="version-meta">王五 · 2024-01-05</div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">快速操作</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <button class="btn btn-secondary" style="width: 100%;">保存草稿</button>
+                            <button class="btn btn-warning" style="width: 100%;">查看原版本</button>
+                            <button class="btn btn-secondary" style="width: 100%;">插入模板</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 编辑操作栏 -->
+            <div class="edit-actions">
+                <div>
+                    <label style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                        <input type="checkbox" checked>
+                        标记为重要更新
+                    </label>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="previewBtn">预览</button>
+                    <button class="btn btn-warning" id="resetBtn">重置</button>
+                    <button class="btn btn-success" id="submitBtn">提交编辑</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 标签管理
+            const tagInput = document.querySelector('.tag-input');
+            const tagsContainer = document.querySelector('.tags-input');
+            
+            tagInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && this.value.trim()) {
+                    e.preventDefault();
+                    const tagText = this.value.trim();
+                    if (tagText) {
+                        const tag = document.createElement('div');
+                        tag.className = 'tag';
+                        tag.innerHTML = `
+                            ${tagText}
+                            <span class="tag-remove">×</span>
+                        `;
+                        tagsContainer.insertBefore(tag, this);
+                        this.value = '';
+                        
+                        // 移除标签功能
+                        tag.querySelector('.tag-remove').addEventListener('click', function() {
+                            tag.remove();
+                        });
+                    }
+                }
+            });
+            
+            // 预览功能
+            const previewBtn = document.getElementById('previewBtn');
+            const previewArea = document.getElementById('previewArea');
+            const previewContent = document.getElementById('previewContent');
+            const editorContent = document.querySelector('.editor-content');
+            
+            previewBtn.addEventListener('click', function() {
+                previewContent.innerHTML = editorContent.innerHTML;
+                previewArea.classList.toggle('active');
+                this.textContent = previewArea.classList.contains('active') ? '关闭预览' : '预览';
+            });
+            
+            // 重置功能
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                if (confirm('确定要重置所有编辑内容吗？')) {
+                    editorContent.innerHTML = `
+                        <h2>概述</h2>
+                        <p>人工智能（Artificial Intelligence，简称AI）是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。人工智能是计算机科学的一个分支，它企图了解智能的实质，并生产出一种新的能以人类智能相似的方式做出反应的智能机器。</p>
+                        
+                        <h2>发展历史</h2>
+                        <p>1956年 - 达特茅斯会议召开，标志着人工智能学科的诞生。</p>
+                        <p>1960年代 - 早期人工智能研究主要集中在问题求解和自然语言处理领域。</p>
+                        <p>1970年代 - 专家系统的出现，人工智能开始走向实用化。</p>
+                        
+                        <h2>核心技术</h2>
+                        <p><strong>机器学习</strong> - 机器学习是人工智能的核心，是使计算机具有智能的根本途径。</p>
+                        <p><strong>深度学习</strong> - 深度学习是机器学习的一个分支，它试图使用包含复杂结构或由多重非线性变换构成的多个处理层对数据进行高层抽象的算法。</p>
+                    `;
+                }
+            });
+            
+            // 提交功能
+            document.getElementById('submitBtn').addEventListener('click', function() {
+                const summary = document.querySelector('input[placeholder*="编辑摘要"]').value;
+                if (!summary.trim()) {
+                    alert('请填写编辑摘要！');
+                    return;
+                }
+                
+                if (confirm('确定要提交编辑吗？')) {
+                    alert('编辑提交成功！等待审核...');
+                    // 这里可以添加实际的提交逻辑
+                }
+            });
+            
+            // 简单的编辑器功能
+            document.querySelectorAll('.editor-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const command = this.textContent;
+                    document.execCommand(command.toLowerCase(), false, null);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

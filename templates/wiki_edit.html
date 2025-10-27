@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑词条 - Django 百度百科风格社区系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .breadcrumb {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+        
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .page-title {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .edit-form {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+        
+        .form-help {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            min-height: 50px;
+            align-items: center;
+        }
+        
+        .tag {
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tag-remove {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tag-input input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+            font-size: 16px;
+            padding: 5px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .preview-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+        }
+        
+        .preview-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .preview-content {
+            line-height: 1.8;
+            color: #2c3e50;
+        }
+        
+        .preview-content h1, .preview-content h2, .preview-content h3 {
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+        }
+        
+        .preview-content p {
+            margin-bottom: 15px;
+        }
+        
+        .preview-content ul, .preview-content ol {
+            margin: 15px 0 15px 20px;
+        }
+        
+        .preview-content blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin: 15px 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .version-history {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+        }
+        
+        .version-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .version-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .version-item {
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .version-item:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+        }
+        
+        .version-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .version-number {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .version-date {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .version-author {
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .version-summary {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .version-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .editor-toolbar {
+            background: #f8f9fa;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px 8px 0 0;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .toolbar-btn {
+            padding: 8px 12px;
+            border: 1px solid #bdc3c7;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .toolbar-btn:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .editor-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            border: 1px solid #ecf0f1;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #bdc3c7;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .edit-form, .preview-section, .version-history {
+                padding: 20px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .editor-toolbar {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="/">首页</a> > 
+                <a href="/wiki_detail.html">人工智能</a> > 
+                <span>编辑词条</span>
+            </div>
+            <h1 class="page-title">编辑词条：人工智能</h1>
+        </header>
+
+        <div class="edit-form">
+            <form id="wikiEditForm">
+                <div class="form-group">
+                    <label class="form-label" for="articleTitle">词条标题</label>
+                    <input type="text" id="articleTitle" class="form-input" value="人工智能" required>
+                    <div class="form-help">请输入词条的准确标题，建议使用标准术语</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="articleCategory">分类</label>
+                    <select id="articleCategory" class="form-select">
+                        <option value="">请选择分类</option>
+                        <option value="technology" selected>技术科学</option>
+                        <option value="computer">计算机科学</option>
+                        <option value="ai">人工智能</option>
+                        <option value="software">软件工程</option>
+                    </select>
+                    <div class="form-help">选择最合适的分类，便于用户查找</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">标签</label>
+                    <div class="tag-input" id="tagContainer">
+                        <span class="tag">人工智能 <button class="tag-remove">×</button></span>
+                        <span class="tag">机器学习 <button class="tag-remove">×</button></span>
+                        <span class="tag">深度学习 <button class="tag-remove">×</button></span>
+                        <input type="text" id="tagInput" placeholder="添加标签...">
+                    </div>
+                    <div class="form-help">输入标签后按回车键添加，最多可添加10个标签</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="articleSummary">摘要</label>
+                    <textarea id="articleSummary" class="form-textarea" placeholder="请输入词条的简要概述...">人工智能（Artificial Intelligence，简称AI）是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。</textarea>
+                    <div class="form-help">简要描述词条的核心内容，建议在200字以内</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="articleContent">详细内容</label>
+                    <div class="editor-toolbar">
+                        <button type="button" class="toolbar-btn" data-command="bold"><strong>B</strong></button>
+                        <button type="button" class="toolbar-btn" data-command="italic"><em>I</em></button>
+                        <button type="button" class="toolbar-btn" data-command="underline"><u>U</u></button>
+                        <button type="button" class="toolbar-btn" data-command="heading1">H1</button>
+                        <button type="button" class="toolbar-btn" data-command="heading2">H2</button>
+                        <button type="button" class="toolbar-btn" data-command="insertUnorderedList">• 列表</button>
+                        <button type="button" class="toolbar-btn" data-command="insertOrderedList">1. 列表</button>
+                        <button type="button" class="toolbar-btn" data-command="createLink">🔗 链接</button>
+                        <button type="button" class="toolbar-btn" data-command="insertImage">🖼️ 图片</button>
+                        <button type="button" class="toolbar-btn" data-command="code"><code>&lt;/&gt;</code></button>
+                    </div>
+                    <textarea id="articleContent" class="form-textarea" placeholder="请输入词条的详细内容..." style="min-height: 400px;"># 人工智能
+
+人工智能（Artificial Intelligence，简称AI）是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。
+
+## 发展历史
+
+人工智能的概念最早可以追溯到1956年达特茅斯会议，标志着人工智能作为一门独立学科的诞生。
+
+### 主要发展阶段
+
+1. **推理探索期（1950s-1960s）**：主要研究逻辑推理和问题求解
+2. **知识工程期（1970s-1980s）**：专家系统和知识表示成为研究重点
+3. **机器学习期（1990s-2000s）**：统计学习和神经网络方法兴起
+4. **深度学习期（2010s至今）**：深度学习技术推动AI快速发展
+
+## 核心技术
+
+- **机器学习**：让计算机从数据中学习规律
+- **自然语言处理**：理解和生成人类语言
+- **计算机视觉**：让计算机"看懂"图像和视频
+- **机器人技术**：智能机器人的控制与交互
+
+> 人工智能的目标是创造能够像人类一样思考、学习、解决问题的智能系统。</textarea>
+                    <div class="editor-status">
+                        <span>字数：256 字</span>
+                        <span>最后保存：2024-01-20 14:30</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editSummary">编辑摘要</label>
+                    <input type="text" id="editSummary" class="form-input" placeholder="请简要描述本次编辑的内容..." value="更新发展历史和技术分类">
+                    <div class="form-help">简要说明本次编辑的主要内容，便于其他编辑者了解变更</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="previewContent()">预览</button>
+                    <button type="button" class="btn btn-secondary" onclick="saveDraft()">保存草稿</button>
+                    <button type="submit" class="btn btn-primary">提交编辑</button>
+                    <button type="button" class="btn btn-danger" onclick="cancelEdit()">取消</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="preview-section" id="previewSection" style="display: none;">
+            <div class="preview-header">
+                <h2 class="preview-title">预览效果</h2>
+                <button type="button" class="btn btn-secondary" onclick="hidePreview()">返回编辑</button>
+            </div>
+            <div class="preview-content" id="previewContent">
+                <!-- 预览内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <div class="version-history">
+            <div class="version-header">
+                <h2 class="version-title">版本历史</h2>
+                <button type="button" class="btn btn-secondary">查看全部</button>
+            </div>
+            
+            <div class="version-list">
+                <div class="version-item">
+                    <div class="version-meta">
+                        <span class="version-number">版本 1.5</span>
+                        <span class="version-date">2024-01-20 14:30</span>
+                    </div>
+                    <div class="version-author">编辑者：张三</div>
+                    <div class="version-summary">更新发展历史和技术分类</div>
+                    <div class="version-actions">
+                        <button class="btn btn-small btn-secondary">查看</button>
+                        <button class="btn btn-small btn-primary">恢复到此版本</button>
+                    </div>
+                </div>
+                
+                <div class="version-item">
+                    <div class="version-meta">
+                        <span class="version-number">版本 1.4</span>
+                        <span class="version-date">2024-01-18 10:15</span>
+                    </div>
+                    <div class="version-author">编辑者：李四</div>
+                    <div class="version-summary">添加机器学习相关内容</div>
+                    <div class="version-actions">
+                        <button class="btn btn-small btn-secondary">查看</button>
+                        <button class="btn btn-small btn-primary">恢复到此版本</button>
+                    </div>
+                </div>
+                
+                <div class="version-item">
+                    <div class="version-meta">
+                        <span class="version-number">版本 1.3</span>
+                        <span class="version-date">2024-01-15 16:45</span>
+                    </div>
+                    <div class="version-author">编辑者：王五</div>
+                    <div class="version-summary">修正技术术语和格式</div>
+                    <div class="version-actions">
+                        <button class="btn btn-small btn-secondary">查看</button>
+                        <button class="btn btn-small btn-primary">恢复到此版本</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Django 百度百科风格社区系统 - 知识管理与社区互动一体化平台</p>
+            <p>© 2024 百科社区系统 - 打造专业的用户社区生态</p>
+        </footer>
+    </div>
+
+    <script>
+        // 标签管理功能
+        document.getElementById('tagInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const tagText = this.value.trim();
+                if (tagText && document.querySelectorAll('.tag').length < 10) {
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.innerHTML = `${tagText} <button class="tag-remove">×</button>`;
+                    
+                    tag.querySelector('.tag-remove').addEventListener('click', function() {
+                        tag.remove();
+                    });
+                    
+                    this.parentNode.insertBefore(tag, this);
+                    this.value = '';
+                }
+            }
+        });
+
+        // 移除现有标签的功能
+        document.querySelectorAll('.tag-remove').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.parentNode.remove();
+            });
+        });
+
+        // 表单提交
+        document.getElementById('wikiEditForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('articleTitle').value;
+            const summary = document.getElementById('editSummary').value;
+            
+            if (!title.trim()) {
+                alert('请输入词条标题');
+                return;
+            }
+            
+            if (!summary.trim()) {
+                alert('请输入编辑摘要');
+                return;
+            }
+            
+            // 模拟提交成功
+            alert('编辑已提交，等待审核！');
+            window.location.href = '/wiki_detail.html';
+        });
+
+        // 预览功能
+        function previewContent() {
+            const content = document.getElementById('articleContent').value;
+            const previewDiv = document.getElementById('previewContent');
+            
+            // 简单的Markdown转换（实际项目中应该使用更完善的转换库）
+            let htmlContent = content
+                .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+                .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+            
+            previewDiv.innerHTML = '<p>' + htmlContent + '</p>';
+            document.getElementById('previewSection').style.display = 'block';
+            document.querySelector('.edit-form').style.display = 'none';
+        }
+
+        function hidePreview() {
+            document.getElementById('previewSection').style.display = 'none';
+            document.querySelector('.edit-form').style.display = 'block';
+        }
+
+        function saveDraft() {
+            alert('草稿已保存！');
+        }
+
+        function cancelEdit() {
+            if (confirm('确定要取消编辑吗？未保存的内容将会丢失。')) {
+                window.location.href = '/wiki_detail.html';
+            }
+        }
+
+        // 简单的编辑器工具栏功能
+        document.querySelectorAll('.toolbar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const command = this.getAttribute('data-command');
+                const textarea = document.getElementById('articleContent');
+                
+                // 简单的命令执行（实际项目中应该使用更完善的编辑器）
+                switch(command) {
+                    case 'bold':
+                        document.execCommand('bold', false, null);
+                        break;
+                    case 'italic':
+                        document.execCommand('italic', false, null);
+                        break;
+                    case 'underline':
+                        document.execCommand('underline', false, null);
+                        break;
+                    case 'heading1':
+                        document.execCommand('formatBlock', false, '<h1>');
+                        break;
+                    case 'heading2':
+                        document.execCommand('formatBlock', false, '<h2>');
+                        break;
+                    case 'insertUnorderedList':
+                        document.execCommand('insertUnorderedList', false, null);
+                        break;
+                    case 'insertOrderedList':
+                        document.execCommand('insertOrderedList', false, null);
+                        break;
+                }
+                
+                textarea.focus();
+            });
+        });
+    </script>
+</body>
+</html>

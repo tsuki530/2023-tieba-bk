@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索 - Django 百度百科风格社区系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-box {
+            display: flex;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus-within {
+            border-color: #3498db;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: transparent;
+        }
+        
+        .search-btn {
+            padding: 15px 30px;
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: #2980b9;
+        }
+        
+        .search-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #3498db;
+        }
+        
+        .search-results {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .result-header {
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .result-count {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .result-filters {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 5px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .result-list {
+            padding: 20px;
+        }
+        
+        .result-item {
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            transition: background 0.3s ease;
+        }
+        
+        .result-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .result-title:hover {
+            text-decoration: underline;
+        }
+        
+        .result-content {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .result-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        
+        .suggestions {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .suggestions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+        
+        .suggestion-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .suggestion-item {
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            font-size: 14px;
+            color: #3498db;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .suggestion-item:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .search-history {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .search-history h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+        
+        .history-list {
+            list-style: none;
+        }
+        
+        .history-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-query {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .history-time {
+            color: #95a5a6;
+            font-size: 12px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #bdc3c7;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+                border-radius: 10px;
+            }
+            
+            .search-input {
+                border-bottom: 1px solid #ecf0f1;
+            }
+            
+            .search-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .result-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .result-filters {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">百度百科</div>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索词条、知识内容..." value="人工智能">
+                    <button class="search-btn">搜索</button>
+                </div>
+                <div class="search-tabs">
+                    <div class="tab active">全部</div>
+                    <div class="tab">词条</div>
+                    <div class="tab">帖子</div>
+                    <div class="tab">用户</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="search-results">
+            <div class="result-header">
+                <div class="result-count">找到约 1,258 条结果（用时 0.23 秒）</div>
+                <div class="result-filters">
+                    <div class="filter-btn active">相关度</div>
+                    <div class="filter-btn">时间</div>
+                    <div class="filter-btn">热度</div>
+                </div>
+            </div>
+            
+            <div class="result-list">
+                <div class="result-item">
+                    <a href="/wiki_detail.html" class="result-title">人工智能 - 百度百科</a>
+                    <div class="result-content">人工智能（Artificial Intelligence，简称AI）是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。人工智能是计算机科学的一个分支，它企图了解智能的实质，并生产出一种新的能以人类智能相似的方式做出反应的智能机器。</div>
+                    <div class="result-meta">
+                        <span>创建时间：2024-01-15</span>
+                        <span>阅读次数：1,258</span>
+                        <span>分类：计算机科学</span>
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <a href="#" class="result-title">机器学习 - 人工智能的重要分支</a>
+                    <div class="result-content">机器学习是人工智能的核心技术之一，主要研究计算机如何模拟或实现人类的学习行为，以获取新的知识或技能，重新组织已有的知识结构使之不断改善自身的性能。</div>
+                    <div class="result-meta">
+                        <span>创建时间：2024-01-10</span>
+                        <span>阅读次数：892</span>
+                        <span>分类：计算机科学</span>
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <a href="#" class="result-title">深度学习在人工智能中的应用</a>
+                    <div class="result-content">深度学习是机器学习的一个分支，它试图使用包含复杂结构或由多重非线性变换构成的多个处理层对数据进行高层抽象。深度学习在图像识别、语音识别等领域取得了突破性进展。</div>
+                    <div class="result-meta">
+                        <span>创建时间：2024-01-08</span>
+                        <span>阅读次数：756</span>
+                        <span>分类：前沿科技</span>
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <a href="#" class="result-title">自然语言处理技术发展现状</a>
+                    <div class="result-content">自然语言处理是人工智能和语言学领域的分支学科，主要研究如何实现人与计算机之间用自然语言进行有效通信。随着大语言模型的发展，自然语言处理技术取得了显著进步。</div>
+                    <div class="result-meta">
+                        <span>创建时间：2024-01-05</span>
+                        <span>阅读次数：634</span>
+                        <span>分类：信息技术</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="suggestions">
+            <h3>相关搜索</h3>
+            <div class="suggestion-list">
+                <a href="#" class="suggestion-item">人工智能发展历史</a>
+                <a href="#" class="suggestion-item">人工智能应用领域</a>
+                <a href="#" class="suggestion-item">人工智能核心技术</a>
+                <a href="#" class="suggestion-item">人工智能未来趋势</a>
+                <a href="#" class="suggestion-item">人工智能伦理问题</a>
+                <a href="#" class="suggestion-item">人工智能与机器学习</a>
+            </div>
+        </div>
+
+        <div class="search-history">
+            <h3>搜索历史</h3>
+            <ul class="history-list">
+                <li class="history-item">
+                    <a href="#" class="history-query">机器学习</a>
+                    <span class="history-time">今天 14:30</span>
+                </li>
+                <li class="history-item">
+                    <a href="#" class="history-query">深度学习</a>
+                    <span class="history-time">今天 10:15</span>
+                </li>
+                <li class="history-item">
+                    <a href="#" class="history-query">自然语言处理</a>
+                    <span class="history-time">昨天 16:45</span>
+                </li>
+                <li class="history-item">
+                    <a href="#" class="history-query">计算机视觉</a>
+                    <span class="history-time">昨天 09:20</span>
+                </li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>Django 百度百科风格社区系统 - 知识管理与社区互动一体化平台</p>
+            <p>© 2024 百科社区系统 - 智能搜索，发现更多知识</p>
+        </footer>
+    </div>
+</body>
+</html>

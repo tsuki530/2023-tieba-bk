@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帖子详情 - 百度百科</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 头部导航 */
+        .header {
+            background: linear-gradient(135deg, #3385ff 0%, #1a6bcc 100%);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 32px;
+        }
+        
+        .search-box {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 20px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #3385ff;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            color: white;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #3385ff;
+        }
+        
+        .btn-primary:hover {
+            background: #1a6bcc;
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* 面包屑导航 */
+        .breadcrumb {
+            background: white;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .breadcrumb-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .breadcrumb-links a {
+            color: #3385ff;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-separator {
+            color: #999;
+        }
+        
+        /* 帖子内容区域 */
+        .post-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .post-main {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .post-header {
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .post-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            line-height: 1.3;
+        }
+        
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3385ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .author-name {
+            font-weight: bold;
+            color: #3385ff;
+        }
+        
+        .post-tags {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .tag {
+            padding: 4px 12px;
+            background: #f0f8ff;
+            border: 1px solid #d1e7ff;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #3385ff;
+        }
+        
+        .post-body {
+            line-height: 1.8;
+            font-size: 16px;
+            color: #444;
+        }
+        
+        .post-body h2 {
+            font-size: 24px;
+            margin: 25px 0 15px 0;
+            color: #1a1a1a;
+        }
+        
+        .post-body h3 {
+            font-size: 20px;
+            margin: 20px 0 12px 0;
+            color: #1a1a1a;
+        }
+        
+        .post-body p {
+            margin-bottom: 15px;
+        }
+        
+        .post-body ul, .post-body ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .post-body li {
+            margin-bottom: 8px;
+        }
+        
+        .post-body blockquote {
+            border-left: 4px solid #3385ff;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #f8f9fa;
+            border-color: #3385ff;
+        }
+        
+        .action-btn.liked {
+            background: #fff0f0;
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        .action-btn.favorited {
+            background: #fff8e6;
+            border-color: #ffc107;
+            color: #ffc107;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .sidebar-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            border-bottom: 2px solid #3385ff;
+            padding-bottom: 8px;
+        }
+        
+        .author-stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #3385ff;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .author-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .author-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #3385ff;
+            background: white;
+            color: #3385ff;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .author-btn:hover {
+            background: #3385ff;
+            color: white;
+        }
+        
+        .author-btn.following {
+            background: #3385ff;
+            color: white;
+        }
+        
+        .related-posts {
+            list-style: none;
+        }
+        
+        .related-post {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .related-post:last-child {
+            border-bottom: none;
+        }
+        
+        .related-post a {
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .related-post a:hover {
+            color: #3385ff;
+        }
+        
+        .related-meta {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* 评论区域 */
+        .comments-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .comments-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+        
+        .comment-count {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .comment-form {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        
+        .comment-submit {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .comment-item {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+        }
+        
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3385ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .comment-content {
+            flex: 1;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .comment-author {
+            font-weight: bold;
+            color: #3385ff;
+        }
+        
+        .comment-time {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .comment-text {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .comment-action {
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .comment-action:hover {
+            color: #3385ff;
+        }
+        
+        .comment-reply {
+            margin-left: 40px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        /* 页脚 */
+        .footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+        
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #3385ff;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: #3385ff;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-box {
+                max-width: 100%;
+                margin: 10px 0;
+            }
+            
+            .post-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .post-title {
+                font-size: 24px;
+            }
+            
+            .post-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .post-actions {
+                flex-wrap: wrap;
+            }
+            
+            .comment-item {
+                flex-direction: column;
+            }
+            
+            .comment-reply {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <span class="logo-icon">📚</span>
+                    百度百科
+                </div>
+                <div class="search-box">
+                    <input type="text" placeholder="搜索词条、用户、帖子..." id="search-input">
+                    <button class="search-btn" onclick="performSearch()">🔍</button>
+                </div>
+                <div class="user-actions">
+                    <a href="#" class="btn btn-secondary">登录</a>
+                    <a href="#" class="btn btn-primary">注册</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <div class="container">
+            <div class="breadcrumb-links">
+                <a href="#">首页</a>
+                <span class="breadcrumb-separator">></span>
+                <a href="#">社区</a>
+                <span class="breadcrumb-separator">></span>
+                <a href="#">技术讨论</a>
+                <span class="breadcrumb-separator">></span>
+                <span>帖子详情</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 帖子内容区域 -->
+    <div class="container">
+        <div class="post-content">
+            <!-- 主内容区域 -->
+            <div class="post-main">
+                <div class="post-header">
+                    <h1 class="post-title">人工智能的未来发展趋势与挑战</h1>
+                    <div class="post-meta">
+                        <div class="author-info">
+                            <div class="author-avatar">张</div>
+                            <div>
+                                <span class="author-name">张三</span>
+                                <span>发布于 2024-01-15 14:30</span>
+                            </div>
+                        </div>
+                        <div>阅读 1,234</div>
+                        <div>点赞 89</div>
+                        <div>评论 45</div>
+                    </div>
+                    <div class="post-tags">
+                        <span class="tag">人工智能</span>
+                        <span class="tag">技术趋势</span>
+                        <span class="tag">机器学习</span>
+                        <span class="tag">未来发展</span>
+                    </div>
+                </div>
+
+                <div class="post-body">
+                    <p>随着人工智能技术的快速发展，我们正站在一个全新的技术革命的门槛上。本文将从多个维度探讨人工智能的未来发展趋势以及面临的挑战。</p>
+
+                    <h2>1. 技术发展趋势</h2>
+                    <p>人工智能技术正在朝着更加智能化、自主化的方向发展。主要趋势包括：</p>
+                    
+                    <h3>1.1 大语言模型的突破</h3>
+                    <p>以GPT系列为代表的大语言模型正在改变我们与计算机交互的方式。这些模型不仅能够理解和生成自然语言，还展现出一定的推理能力和创造力。</p>
+                    
+                    <blockquote>
+                        "大语言模型的出现标志着人工智能进入了一个新的发展阶段，它们正在重新定义人机交互的边界。"
+                    </blockquote>
+                    
+                    <h3>1.2 多模态AI的发展</h3>
+                    <p>未来的AI系统将能够同时处理文本、图像、音频、视频等多种模态的信息，实现更加全面的智能理解。</p>
+                    
+                    <h3>1.3 自主智能体的兴起</h3>
+                    <p>AI系统正在从被动响应向主动决策转变，自主智能体能够在复杂环境中独立完成任务。</p>
+
+                    <h2>2. 应用领域拓展</h2>
+                    <p>人工智能技术正在渗透到各个行业和领域：</p>
+                    
+                    <ul>
+                        <li><strong>医疗健康</strong>：AI辅助诊断、药物研发、个性化治疗方案</li>
+                        <li><strong>教育</strong>：个性化学习、智能辅导、教育内容生成</li>
+                        <li><strong>制造业</strong>：智能生产、质量控制、预测性维护</li>
+                        <li><strong>金融</strong>：风险评估、投资决策、客户服务</li>
+                    </ul>
+
+                    <h2>3. 面临的挑战</h2>
+                    <p>尽管前景广阔，人工智能的发展也面临着诸多挑战：</p>
+                    
+                    <h3>3.1 技术挑战</h3>
+                    <p>包括模型的可解释性、数据隐私保护、算法的公平性等问题。</p>
+                    
+                    <h3>3.2 伦理挑战</h3>
+                    <p>AI系统的决策透明度、责任归属、对人类就业的影响等。</p>
+                    
+                    <h3>3.3 监管挑战</h3>
+                    <p>如何制定合理的监管政策，既促进创新又防范风险。</p>
+
+                    <h2>4. 未来展望</h2>
+                    <p>展望未来，人工智能将继续深刻改变我们的生活方式和工作方式。我们需要在技术创新的同时，重视伦理规范和制度建设，确保人工智能技术为人类带来福祉。</p>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action-btn" id="like-btn" onclick="toggleLike()">
+                        <span>👍</span>
+                        <span>点赞 (89)</span>
+                    </button>
+                    <button class="action-btn" id="favorite-btn" onclick="toggleFavorite()">
+                        <span>⭐</span>
+                        <span>收藏 (23)</span>
+                    </button>
+                    <button class="action-btn" onclick="sharePost()">
+                        <span>↗️</span>
+                        <span>分享</span>
+                    </button>
+                    <button class="action-btn" onclick="reportPost()">
+                        <span>⚠️</span>
+                        <span>举报</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <!-- 作者信息 -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">作者信息</h3>
+                    <div class="author-info">
+                        <div class="author-avatar">张</div>
+                        <div>
+                            <div class="author-name">张三</div>
+                            <div>机器学习工程师</div>
+                        </div>
+                    </div>
+                    <div class="author-stats">
+                        <div class="stat">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">帖子</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">567</div>
+                            <div class="stat-label">粉丝</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">89</div>
+                            <div class="stat-label">关注</div>
+                        </div>
+                    </div>
+                    <div class="author-actions">
+                        <button class="author-btn" id="follow-btn" onclick="toggleFollow()">关注</button>
+                        <button class="author-btn" onclick="sendMessage()">私信</button>
+                    </div>
+                </div>
+
+                <!-- 相关帖子 -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">相关帖子</h3>
+                    <ul class="related-posts">
+                        <li class="related-post">
+                            <a href="#">机器学习在医疗诊断中的应用前景</a>
+                            <div class="related-meta">
+                                <span>张三</span>
+                                <span>2024-01-10</span>
+                                <span>👍 67</span>
+                            </div>
+                        </li>
+                        <li class="related-post">
+                            <a href="#">深度学习模型优化技巧分享</a>
+                            <div class="related-meta">
+                                <span>李四</span>
+                                <span>2024-01-08</span>
+                                <span>👍 45</span>
+                            </div>
+                        </li>
+                        <li class="related-post">
+                            <a href="#">自然语言处理技术的最新进展</a>
+                            <div class="related-meta">
+                                <span>王五</span>
+                                <span>2024-01-05</span>
+                                <span>👍 89</span>
+                            </div>
+                        </li>
+                        <li class="related-post">
+                            <a href="#">计算机视觉在自动驾驶中的应用</a>
+                            <div class="related-meta">
+                                <span>赵六</span>
+                                <span>2024-01-03</span>
+                                <span>👍 34</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 热门标签 -->
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">热门标签</h3>
+                    <div class="post-tags">
+                        <span class="tag">人工智能</span>
+                        <span class="tag">机器学习</span>
+                        <span class="tag">深度学习</span>
+                        <span class="tag">自然语言处理</span>
+                        <span class="tag">计算机视觉</span>
+                        <span class="tag">数据科学</span>
+                        <span class="tag">算法</span>
+                        <span class="tag">编程</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 评论区域 -->
+        <div class="comments-section">
+            <div class="comments-header">
+                <h2 class="comments-title">评论</h2>
+                <div class="comment-count">共 45 条评论</div>
+            </div>
+
+            <!-- 评论表单 -->
+            <div class="comment-form">
+                <textarea class="comment-textarea" placeholder="写下您的评论..." id="comment-input"></textarea>
+                <div class="comment-submit">
+                    <button class="btn btn-primary" onclick="submitComment()">发表评论</button>
+                </div>
+            </div>
+
+            <!-- 评论列表 -->
+            <div class="comments-list">
+                <div class="comment-item">
+                    <div class="comment-avatar">李</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">李四</span>
+                            <span class="comment-time">2024-01-15 15:20</span>
+                        </div>
+                        <div class="comment-text">
+                            非常赞同作者的观点！人工智能确实正在深刻改变我们的世界。特别是在医疗领域的应用，已经展现出巨大的潜力。
+                        </div>
+                        <div class="comment-actions">
+                            <span class="comment-action" onclick="likeComment(1)">👍 12</span>
+                            <span class="comment-action" onclick="replyComment(1)">回复</span>
+                            <span class="comment-action" onclick="reportComment(1)">举报</span>
+                        </div>
+                        
+                        <!-- 回复 -->
+                        <div class="comment-reply">
+                            <div class="comment-item">
+                                <div class="comment-avatar">王</div>
+                                <div class="comment-content">
+                                    <div class="comment-header">
+                                        <span class="comment-author">王五</span>
+                                        <span class="comment-time">2024-01-15 15:45</span>
+                                    </div>
+                                    <div class="comment-text">
+                                        同意！不过我觉得在伦理规范方面还需要更多的讨论和制度建设。
+                                    </div>
+                                    <div class="comment-actions">
+                                        <span class="comment-action" onclick="likeComment(2)">👍 5</span>
+                                        <span class="comment-action" onclick="replyComment(2)">回复</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-avatar">赵</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">赵六</span>
+                            <span class="comment-time">2024-01-15 16:10</span>
+                        </div>
+                        <div class="comment-text">
+                            文章写得很好，特别是对技术挑战的分析很到位。希望看到更多关于具体技术实现细节的内容。
+                        </div>
+                        <div class="comment-actions">
+                            <span class="comment-action" onclick="likeComment(3)">👍 8</span>
+                            <span class="comment-action" onclick="replyComment(3)">回复</span>
+                            <span class="comment-action" onclick="reportComment(3)">举报</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-item">
+                    <div class="comment-avatar">钱</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">钱七</span>
+                            <span class="comment-time">2024-01-15 17:30</span>
+                        </div>
+                        <div class="comment-text">
+                            作为一个AI从业者，我觉得文章对行业趋势的把握很准确。期待看到更多深度分析！
+                        </div>
+                        <div class="comment-actions">
+                            <span class="comment-action" onclick="likeComment(4)">👍 15</span>
+                            <span class="comment-action" onclick="replyComment(4)">回复</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于我们</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">平台介绍</a></li>
+                        <li><a href="#">发展历程</a></li>
+                        <li><a href="#">团队介绍</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>帮助中心</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">使用指南</a></li>
+                        <li><a href="#">编辑规范</a></li>
+                        <li><a href="#">常见问题</a></li>
+                        <li><a href="#">意见反馈</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>服务条款</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">用户协议</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">版权声明</a></li>
+                        <li><a href="#">免责声明</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>关注我们</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">微信公众号</a></li>
+                        <li><a href="#">微博</a></li>
+                        <li><a href="#">知乎</a></li>
+                        <li><a href="#">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2024 百度百科. 保留所有权利. 京ICP备12345678号</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 搜索功能
+            function performSearch() {
+                const query = document.getElementById('search-input').value.trim();
+                if (query) {
+                    alert(`搜索: ${query}`);
+                    // 这里可以跳转到搜索结果页面
+                } else {
+                    alert('请输入搜索关键词');
+                }
+            }
+            
+            // 点赞功能
+            let isLiked = false;
+            let likeCount = 89;
+            
+            window.toggleLike = function() {
+                const likeBtn = document.getElementById('like-btn');
+                const likeText = likeBtn.querySelector('span:last-child');
+                
+                if (isLiked) {
+                    likeCount--;
+                    likeBtn.classList.remove('liked');
+                } else {
+                    likeCount++;
+                    likeBtn.classList.add('liked');
+                }
+                
+                likeText.textContent = `点赞 (${likeCount})`;
+                isLiked = !isLiked;
+                
+                // 这里可以调用点赞API
+                console.log(`点赞状态: ${isLiked}, 点赞数: ${likeCount}`);
+            };
+            
+            // 收藏功能
+            let isFavorited = false;
+            let favoriteCount = 23;
+            
+            window.toggleFavorite = function() {
+                const favoriteBtn = document.getElementById('favorite-btn');
+                const favoriteText = favoriteBtn.querySelector('span:last-child');
+                
+                if (isFavorited) {
+                    favoriteCount--;
+                    favoriteBtn.classList.remove('favorited');
+                } else {
+                    favoriteCount++;
+                    favoriteBtn.classList.add('favorited');
+                }
+                
+                favoriteText.textContent = `收藏 (${favoriteCount})`;
+                isFavorited = !isFavorited;
+                
+                // 这里可以调用收藏API
+                console.log(`收藏状态: ${isFavorited}, 收藏数: ${favoriteCount}`);
+            };
+            
+            // 分享功能
+            window.sharePost = function() {
+                const postTitle = document.querySelector('.post-title').textContent;
+                alert(`分享帖子: ${postTitle}`);
+                // 这里可以调用分享API
+            };
+            
+            // 举报功能
+            window.reportPost = function() {
+                alert('举报帖子');
+                // 这里可以跳转到举报页面
+            };
+            
+            // 关注功能
+            let isFollowing = false;
+            
+            window.toggleFollow = function() {
+                const followBtn = document.getElementById('follow-btn');
+                
+                if (isFollowing) {
+                    followBtn.textContent = '关注';
+                    followBtn.classList.remove('following');
+                } else {
+                    followBtn.textContent = '已关注';
+                    followBtn.classList.add('following');
+                }
+                
+                isFollowing = !isFollowing;
+                
+                // 这里可以调用关注API
+                console.log(`关注状态: ${isFollowing}`);
+            };
+            
+            // 私信功能
+            window.sendMessage = function() {
+                alert('发送私信');
+                // 这里可以跳转到私信页面
+            };
+            
+            // 评论功能
+            window.submitComment = function() {
+                const commentInput = document.getElementById('comment-input');
+                const commentText = commentInput.value.trim();
+                
+                if (commentText) {
+                    alert(`发表评论: ${commentText}`);
+                    commentInput.value = '';
+                    // 这里可以调用评论API
+                } else {
+                    alert('请输入评论内容');
+                }
+            };
+            
+            // 评论点赞功能
+            window.likeComment = function(commentId) {
+                alert(`点赞评论 ID: ${commentId}`);
+                // 这里可以调用评论点赞API
+            };
+            
+            // 回复评论功能
+            window.replyComment = function(commentId) {
+                alert(`回复评论 ID: ${commentId}`);
+                // 这里可以显示回复表单
+            };
+            
+            // 举报评论功能
+            window.reportComment = function(commentId) {
+                alert(`举报评论 ID: ${commentId}`);
+                // 这里可以跳转到举报页面
+            };
+            
+            // 搜索框回车事件
+            document.getElementById('search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // 页面滚动效果
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('.header');
+                if (window.scrollY > 100) {
+                    header.style.background = 'rgba(51, 133, 255, 0.95)';
+                    header.style.backdropFilter = 'blur(10px)';
+                } else {
+                    header.style.background = 'linear-gradient(135deg, #3385ff 0%, #1a6bcc 100%)';
+                    header.style.backdropFilter = 'none';
+                }
+            });
+            
+            // 登录注册功能
+            document.querySelectorAll('.btn-secondary').forEach(btn => {
+                if (btn.textContent === '登录') {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('打开登录页面');
+                        // 这里可以跳转到登录页面
+                    });
+                }
+            });
+            
+            document.querySelectorAll('.btn-primary').forEach(btn => {
+                if (btn.textContent === '注册') {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        alert('打开注册页面');
+                        // 这里可以跳转到注册页面
+                    });
+                }
+            });
+        });
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            console.log('帖子详情页面原型加载完成');
+            
+            // 模拟数据加载
+            setTimeout(() => {
+                console.log('帖子内容和评论数据加载完成');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

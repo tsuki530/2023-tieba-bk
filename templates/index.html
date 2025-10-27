@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百度百科社区系统 - 功能导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        .navigation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .nav-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-links {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        
+        .nav-link:hover {
+            background: #3498db;
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .link-icon {
+            font-size: 1.5em;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .link-text {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .link-description {
+            font-size: 0.85em;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        .api-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .api-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .api-link {
+            display: block;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            color: #3498db;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            font-size: 0.9em;
+        }
+        
+        .api-link:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px 20px;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .navigation-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .nav-section {
+                padding: 20px;
+            }
+            
+            .api-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">📚 百度百科社区系统</div>
+            <div class="subtitle">知识管理与社区互动一体化平台</div>
+            
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="🔍 搜索百科词条、用户或内容...">
+            </div>
+        </header>
+
+        <div class="navigation-grid">
+            <!-- 百科内容管理 -->
+            <div class="nav-section">
+                <h2 class="section-title">📚 百科内容</h2>
+                <div class="nav-links">
+                    <a href="/wiki_detail.html" class="nav-link" target="_blank">
+                        <span class="link-icon">📖</span>
+                        <div>
+                            <div class="link-text">百科词条详情</div>
+                            <div class="link-description">查看完整的词条内容和相关信息</div>
+                        </div>
+                    </a>
+                    <a href="/wiki_edit.html" class="nav-link" target="_blank">
+                        <span class="link-icon">✏️</span>
+                        <div>
+                            <div class="link-text">百科编辑页面</div>
+                            <div class="link-description">编辑词条内容和版本管理</div>
+                        </div>
+                    </a>
+                    <a href="/search.html" class="nav-link" target="_blank">
+                        <span class="link-icon">🔍</span>
+                        <div>
+                            <div class="link-text">搜索页面</div>
+                            <div class="link-description">搜索百科词条和相关内容</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 用户中心 -->
+            <div class="nav-section">
+                <h2 class="section-title">👤 用户中心</h2>
+                <div class="nav-links">
+                    <a href="/user_profile.html" class="nav-link" target="_blank">
+                        <span class="link-icon">👤</span>
+                        <div>
+                            <div class="link-text">个人中心</div>
+                            <div class="link-description">管理个人资料和编辑记录</div>
+                        </div>
+                    </a>
+                    <a href="/notifications.html" class="nav-link" target="_blank">
+                        <span class="link-icon">🔔</span>
+                        <div>
+                            <div class="link-text">消息通知</div>
+                            <div class="link-description">查看系统消息和互动通知</div>
+                        </div>
+                    </a>
+                    <a href="/api/auth/profile/" class="nav-link" target="_blank">
+                        <span class="link-icon">🔐</span>
+                        <div>
+                            <div class="link-text">用户认证</div>
+                            <div class="link-description">登录注册和权限管理</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 系统管理 -->
+            <div class="nav-section">
+                <h2 class="section-title">⚙️ 系统管理</h2>
+                <div class="nav-links">
+                    <a href="/admin/" class="nav-link" target="_blank">
+                        <span class="link-icon">🔧</span>
+                        <div>
+                            <div class="link-text">管理后台</div>
+                            <div class="link-description">系统配置和内容审核</div>
+                        </div>
+                    </a>
+                    <a href="/api/posts/" class="nav-link" target="_blank">
+                        <span class="link-icon">📝</span>
+                        <div>
+                            <div class="link-text">帖子管理</div>
+                            <div class="link-description">社区帖子和讨论管理</div>
+                        </div>
+                    </a>
+                    <a href="/api/wiki/" class="nav-link" target="_blank">
+                        <span class="link-icon">📚</span>
+                        <div>
+                            <div class="link-text">百科API</div>
+                            <div class="link-description">词条数据接口服务</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2 class="section-title">🔗 系统API接口</h2>
+            <div class="api-links">
+                <a href="/api/wiki/" class="api-link" target="_blank">📚 百科API - 词条数据管理</a>
+                <a href="/api/posts/" class="api-link" target="_blank">📝 帖子API - 社区内容管理</a>
+                <a href="/api/auth/profile/" class="api-link" target="_blank">👤 用户认证API - 权限管理</a>
+                <a href="/api/search/" class="api-link" target="_blank">🔍 搜索API - 全文检索服务</a>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Django 百度百科风格社区系统 - 知识管理与社区互动一体化平台</p>
+            <p>© 2024 百科社区系统 - 打造专业的用户社区生态</p>
+        </footer>
+    </div>
+
+    <script>
+        // 搜索功能
+        document.querySelector('.search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    window.open('/search.html?q=' + encodeURIComponent(query), '_blank');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

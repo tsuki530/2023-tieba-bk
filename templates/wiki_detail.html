@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>词条详情 - Django 百度百科风格社区系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .breadcrumb {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .article-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .article-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .article-content h2 {
+            color: #2c3e50;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin: 25px 0 15px 0;
+        }
+        
+        .article-content p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .article-actions {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+        }
+        
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .category-list {
+            list-style: none;
+        }
+        
+        .category-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .category-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .category-list a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .category-list a:hover {
+            text-decoration: underline;
+        }
+        
+        .related-articles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .related-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .related-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .related-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .related-card p {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .version-history {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .version-item {
+            padding: 10px;
+            border-left: 3px solid #3498db;
+            margin-bottom: 10px;
+            background: white;
+        }
+        
+        .version-meta {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #bdc3c7;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .article-title {
+                font-size: 1.8em;
+            }
+            
+            .article-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .article-actions {
+                flex-wrap: wrap;
+            }
+            
+            .related-articles {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="breadcrumb">
+                <a href="/">首页</a> > 
+                <a href="/api/wiki/">百科词条</a> > 
+                <span>词条详情</span>
+            </div>
+            <h1 class="article-title">人工智能</h1>
+            <div class="article-meta">
+                <span>创建者：百科管理员</span>
+                <span>创建时间：2024-01-15</span>
+                <span>最后编辑：2024-01-20</span>
+                <span>阅读次数：1,258</span>
+            </div>
+        </header>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+            <div>
+                <div class="article-content">
+                    <h2>概述</h2>
+                    <p>人工智能（Artificial Intelligence，简称AI）是研究、开发用于模拟、延伸和扩展人的智能的理论、方法、技术及应用系统的一门新的技术科学。人工智能是计算机科学的一个分支，它企图了解智能的实质，并生产出一种新的能以人类智能相似的方式做出反应的智能机器。</p>
+                    
+                    <h2>发展历史</h2>
+                    <p>人工智能的概念最早可以追溯到1956年达特茅斯会议，标志着人工智能作为一门独立学科的诞生。经过几十年的发展，人工智能经历了从符号主义到连接主义的转变，并在21世纪迎来了深度学习的爆发式发展。</p>
+                    
+                    <h2>核心技术</h2>
+                    <p>人工智能的核心技术包括机器学习、深度学习、自然语言处理、计算机视觉、知识表示与推理等。其中，深度学习在图像识别、语音识别等领域取得了突破性进展。</p>
+                    
+                    <h2>应用领域</h2>
+                    <p>人工智能已广泛应用于各个领域，包括医疗健康、金融服务、交通运输、教育培训、智能制造等。随着技术的不断发展，人工智能正在深刻改变人类的生产和生活方式。</p>
+                    
+                    <div class="article-actions">
+                        <button class="btn btn-primary">编辑词条</button>
+                        <button class="btn btn-secondary">查看历史</button>
+                        <button class="btn btn-success">收藏词条</button>
+                    </div>
+                </div>
+
+                <div class="version-history">
+                    <h3>版本历史</h3>
+                    <div class="version-item">
+                        <strong>版本 1.2</strong> - 2024-01-20
+                        <div class="version-meta">编辑者：张三 • 修改内容：更新应用领域</div>
+                    </div>
+                    <div class="version-item">
+                        <strong>版本 1.1</strong> - 2024-01-18
+                        <div class="version-meta">编辑者：李四 • 修改内容：完善核心技术描述</div>
+                    </div>
+                    <div class="version-item">
+                        <strong>版本 1.0</strong> - 2024-01-15
+                        <div class="version-meta">创建者：百科管理员 • 创建基础词条</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <h3>分类信息</h3>
+                <ul class="category-list">
+                    <li><a href="#">计算机科学</a></li>
+                    <li><a href="#">信息技术</a></li>
+                    <li><a href="#">前沿科技</a></li>
+                    <li><a href="#">人工智能</a></li>
+                </ul>
+                
+                <h3>标签</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;">
+                    <span style="background: #e74c3c; color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px;">机器学习</span>
+                    <span style="background: #3498db; color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px;">深度学习</span>
+                    <span style="background: #27ae60; color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px;">自然语言处理</span>
+                    <span style="background: #f39c12; color: white; padding: 3px 8px; border-radius: 12px; font-size: 12px;">计算机视觉</span>
+                </div>
+                
+                <h3>相关词条</h3>
+                <div class="related-articles">
+                    <div class="related-card">
+                        <h4>机器学习</h4>
+                        <p>机器学习是人工智能的核心技术之一，主要研究计算机如何模拟或实现人类的学习行为。</p>
+                    </div>
+                    <div class="related-card">
+                        <h4>深度学习</h4>
+                        <p>深度学习是机器学习的一个分支，它试图使用包含复杂结构或由多重非线性变换构成的多个处理层对数据进行高层抽象。</p>
+                    </div>
+                    <div class="related-card">
+                        <h4>自然语言处理</h4>
+                        <p>自然语言处理是人工智能和语言学领域的分支学科，主要研究如何实现人与计算机之间用自然语言进行有效通信。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Django 百度百科风格社区系统 - 知识管理与社区互动一体化平台</p>
+            <p>© 2024 百科社区系统 - 所有词条内容均由社区用户共同编辑维护</p>
+        </footer>
+    </div>
+</body>
+</html>
